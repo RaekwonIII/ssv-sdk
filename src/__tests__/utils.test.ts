@@ -62,6 +62,7 @@ describe('URL Join Utils', () => {
     expect(urlJoin('http://example.com', 'path')).toBe('http://example.com/path')
     expect(urlJoin('http://example.com/', '/path')).toBe('http://example.com/path')
     expect(urlJoin('http://example.com/', '/path/')).toBe('http://example.com/path/')
+    expect(urlJoin('http://example.com:3000', '/path/')).toBe('http://example.com:3000/path/')
   })
 
   test('handles query parameters correctly', () => {

@@ -10,6 +10,7 @@ import type {
   GetOperatorsQueryVariables,
   GetOwnerNonceByBlockQueryVariables,
   GetValidatorQueryVariables,
+  GetValidatorsByAccountQueryVariables,
   GetValidatorsQueryVariables,
 } from '../../graphql/graphql'
 import {
@@ -22,6 +23,7 @@ import {
   GetOwnerNonceByBlockDocument,
   GetOwnerNonceDocument,
   GetValidatorDocument,
+  GetValidatorsByAccountDocument,
   GetValidatorsDocument,
 } from '../../graphql/graphql'
 export const getOwnerNonce = (client: GraphQLClient, args: GetOwnerNonceByBlockQueryVariables) => {
@@ -67,18 +69,29 @@ export const getValidator = (client: GraphQLClient, args: GetValidatorQueryVaria
 export const getClusterBalance = (client: GraphQLClient, args: GetClusterBalanceQueryVariables) =>
   client.request(GetClusterBalanceDocument, args)
 
+export const getValidatorsByAccount = (
+  client: GraphQLClient,
+  args: GetValidatorsByAccountQueryVariables,
+) =>
+  client
+    .request(GetValidatorsByAccountDocument, args)
+    .then((res) => res.validators.map((v) => v.id))
+
 export const getQueries = (client: GraphQLClient) => ({
-  getOwnerNonce: getOwnerNonce.bind(null, client) as RemoveConfigArg<typeof getOwnerNonce>,
-  getClusterSnapshot: getClusterSnapshot.bind(null, client) as RemoveConfigArg<
-    typeof getClusterSnapshot
+  getValidatorsByAccount: getValidatorsByAccount.bind(null, client) as RemoveConfigArg<
+    typeof getValidatorsByAccount
   >,
-  getCluster: getCluster.bind(null, client) as RemoveConfigArg<typeof getCluster>,
-  getClusters: getClusters.bind(null, client) as RemoveConfigArg<typeof getClusters>,
-  getOperator: getOperator.bind(null, client) as RemoveConfigArg<typeof getOperator>,
-  getOperators: getOperators.bind(null, client) as RemoveConfigArg<typeof getOperators>,
-  getValidators: getValidators.bind(null, client) as RemoveConfigArg<typeof getValidators>,
-  getValidator: getValidator.bind(null, client) as RemoveConfigArg<typeof getValidator>,
-  getClusterBalance: getClusterBalance.bind(null, client) as RemoveConfigArg<
-    typeof getClusterBalance
-  >,
+  // getOwnerNonce: getOwnerNonce.bind(null, client) as RemoveConfigArg<typeof getOwnerNonce>,
+  // getClusterSnapshot: getClusterSnapshot.bind(null, client) as RemoveConfigArg<
+  //   typeof getClusterSnapshot
+  // >,
+  // getCluster: getCluster.bind(null, client) as RemoveConfigArg<typeof getCluster>,
+  // getClusters: getClusters.bind(null, client) as RemoveConfigArg<typeof getClusters>,
+  // getOperator: getOperator.bind(null, client) as RemoveConfigArg<typeof getOperator>,
+  // getOperators: getOperators.bind(null, client) as RemoveConfigArg<typeof getOperators>,
+  // getValidators: getValidators.bind(null, client) as RemoveConfigArg<typeof getValidators>,
+  // getValidator: getValidator.bind(null, client) as RemoveConfigArg<typeof getValidator>,
+  // getClusterBalance: getClusterBalance.bind(null, client) as RemoveConfigArg<
+  //   typeof getClusterBalance
+  // >,
 })

@@ -104,3 +104,9 @@ query GetClusterBalance($clusterId: ID!, $daoAddress: ID!, $operatorIds: [String
     balance
   }
 }
+
+query GetValidatorsByAccount($account: String!) {
+  validators(where: { owner: $account }) {
+    id
+  }
+}
