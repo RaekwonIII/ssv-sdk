@@ -1,44 +1,24 @@
-import { chains } from '@/config'
 import { BasedAppsSDK } from '@/sdk'
-import { createPublicClient, http } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 describe('SDK Initiation', async () => {
-  const chain = chains.holesky
-  const transport = http()
-
-  const publicClient = createPublicClient({
-    chain,
-    transport,
-  })
-
   it('should initialize the SDK', async () => {
     expect(() => {
       return new BasedAppsSDK({
-        publicClient,
+        chain: 17000,
       })
     }).not.toThrowError()
   })
 
-  it('can get validators by account', async () => {
+  it('can calculate total balance', async () => {
     const sdk = new BasedAppsSDK({
-      publicClient,
+      chain: 17000,
     })
 
-    const validators = await sdk.api.ssv.getValidatorsByAccount({
-      account: '0x3187a42658417a4d60866163a4534ce00d40c0c8',
+    const response = await sdk.api.bam.getValidatorsBalance({
+      account: '0x77fc6e8b24a623725d935bc88057098d0bca6eb3',
     })
 
-    // const balances = await sdk.api.beacon.getValidatorBalances({
-    //   stateId: 'head',
-    //   validatorIds: validators,
-    // })
-
-    // console.log(balances)
-
-    console.log(validators)
-
-    expect(validators).toBeDefined()
-    expect(Array.isArray(validators)).toBe(true)
+    expect(response.balance).toBeDefined()
   })
 })

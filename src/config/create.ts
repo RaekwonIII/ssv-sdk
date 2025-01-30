@@ -3,20 +3,21 @@ import { MainnetV4SetterABI } from '@/abi/mainnet/v4/setter'
 import { TokenABI } from '@/abi/token'
 import { createReader, createWriter } from '@/contract-interactions/create'
 
-import { createBeaconChainAPI, createQueries } from '@/libs/api'
+import { createBasedAppsAPI, createBeaconChainAPI, createQueries } from '@/libs/api'
 import type { ConfigArgs } from '@/utils/zod/config'
 import { configArgsSchema } from '@/utils/zod/config'
 import { GraphQLClient } from 'graphql-request'
-import type { Chain, PublicClient, WalletClient } from 'viem'
+import type { PublicClient, WalletClient } from 'viem'
 import type { ContractAddresses, SupportedChainsIDs } from './chains'
-import { beaconchain_endpoints, chainIds, graph_endpoints } from './chains'
+import { beaconchain_endpoints, graph_endpoints } from './chains'
 
 export type ConfigReturnType = {
   publicClient: PublicClient
-  chain: Chain
+  chain: SupportedChainsIDs
   api: {
     ssv: ReturnType<typeof createQueries>
     beacon: ReturnType<typeof createBeaconChainAPI>
+    bam: ReturnType<typeof createBasedAppsAPI>
   }
   graphQLClient: GraphQLClient
   graphEndpoint: string
@@ -77,24 +78,27 @@ export const createContractInteractions = ({
 
 export const createConfig = (props: ConfigArgs): ConfigReturnType => {
   const parsed = configArgsSchema.parse(props)
-  const { publicClient } = parsed
-  if (!publicClient.chain || !chainIds.includes(publicClient.chain?.id as SupportedChainsIDs))
-    throw new Error(`Chain must be one of ${chainIds.join(', ')}`)
+  const { chain } = parsed
+  // const { publicClient } = parsed
+  // if (!publicClient.chain || !chainIds.includes(publicClient.chain?.id as SupportedChainsIDs))
+  //   throw new Error(`Chain must be one of ${chainIds.join(', ')}`)
 
-  const chainId = publicClient.chain.id as SupportedChainsIDs
-
-  const graphEndpoint = graph_endpoints[chainId]
-  const beaconchainEndpoint = beaconchain_endpoints[chainId]
+  const graphEndpoint = graph_endpoints[chain]
+  const beaconchainEndpoint = beaconchain_endpoints[chain]
   const graphQLClient = new GraphQLClient(graphEndpoint)
 
+  const apis = {
+    ssv: createQueries(graphQLClient),
+    beacon: createBeaconChainAPI(beaconchainEndpoint),
+  }
   return {
-    publicClient,
-    chain: publicClient.chain,
+    chain,
     graphEndpoint,
     api: {
       ssv: createQueries(graphQLClient),
       beacon: createBeaconChainAPI(beaconchainEndpoint),
+      bam: createBasedAppsAPI(apis),
     },
     graphQLClient,
-  }
+  } as ConfigReturnType
 }

@@ -15,8 +15,8 @@ export const graph_endpoints: Record<SupportedChainsIDs, string> = {
 }
 
 export const beaconchain_endpoints: Record<SupportedChainsIDs, string> = {
-  [mainnet.id]: 'http://besu-lh-holesky-2-beacon.ethereum-clients.svc:5052',
-  [holesky.id]: 'http://besu-lh-holesky-2-beacon.ethereum-clients.svc:5052',
+  [mainnet.id]: 'http://141.95.98.197:31056/',
+  [holesky.id]: 'http://141.95.98.197:31056/',
 }
 
 export const rest_endpoints: Record<SupportedChainsIDs, string> = {
